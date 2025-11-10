@@ -107,7 +107,6 @@ public class SpellChecker {
     private void handleMisspell(String misspelledWord, boolean hasSuggestion){
         // text prompt setup
         System.out.printf(Util.MISSPELL_NOTIFICATION, misspelledWord);
-        System.out.println();
         if (hasSuggestion){
             System.out.println("The following suggestions are available:");
             // print out each suggestion
@@ -126,6 +125,7 @@ public class SpellChecker {
         while (true) {
             try {
                 // record user option selection
+                System.out.print(">> ");
                 String choice = inputReader.next();
                 // different modification method for different option selection
                 if (choice.equals("r") && hasSuggestion) {
@@ -145,7 +145,7 @@ public class SpellChecker {
                     return;
                 } else {
                     // user type the wrong option
-                    System.out.printf("Please choose one of the valid options.");
+                    System.out.println("Please choose one of the valid options.");
                 }
             } catch (InputMismatchException e) {
                 System.out.println("Please choose one of the valid options.");
@@ -168,6 +168,7 @@ public class SpellChecker {
                 }
             } catch (InputMismatchException e) {
                 System.out.println("Please enter a valid number.");
+                inputReader.nextLine(); // prevent infinite loop due to last input
             }
         }
     }
