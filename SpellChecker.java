@@ -9,6 +9,7 @@ public class SpellChecker {
     private ArrayList<String> wordSuggestion;
     private ArrayList<String> inputWordBank;
     private ArrayList<String> outputWordBank;
+    private ArrayList<Integer> lineBreakIndex;
     private WordRecommender recommender;
 
     public SpellChecker() {
@@ -18,6 +19,7 @@ public class SpellChecker {
         this.wordSuggestion = new ArrayList<String>();
         this.inputWordBank = new ArrayList<String>();
         this.outputWordBank = new ArrayList<String>();
+        this.lineBreakIndex = new ArrayList<Integer>();
         this.recommender = null;
     }
 
@@ -37,6 +39,7 @@ public class SpellChecker {
         // (YS) Step 2: Update inputWordBank and engDictionary (fill in with given .txt files) and WordRecommender
         storeWordInArrayList(dict,engDictionary);
         storeWordInArrayList(text,inputWordBank);
+        storeLineIndex(text, lineBreakIndex);
         recommender = new WordRecommender(dict);
 
         // (YS) Step 3: Pick each word from the inputWordBank and store the updated result into outputWordBank (LOOP)
@@ -89,6 +92,31 @@ public class SpellChecker {
                 String word = fileReader.next();
                 wordBank.add(word);
             }
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + e.getMessage());
+        }
+    }
+
+    // (YS) Single Method: store each \n inside the input .txt file
+    private void storeLineIndex(String fileName, ArrayList<Integer> lineBreakIndex){
+        try {
+            FileInputStream inputFile = new FileInputStream(fileName);
+            Scanner fileReader = new Scanner(inputFile);
+            int index = 0;
+            while (fileReader.hasNextLine()) {
+                String line = fileReader.nextLine();
+                // if line is empty (record the last word index again)
+                if (line.isEmpty()) {
+                    lineBreakIndex.add(index - 1);
+                    continue; // move to next line
+                }
+                // if line is not empty
+                String[] words = line.split("\\s+"); // split the line into words by " " (any number of space)
+                index += words.length; // find the index of the last word in this line
+                lineBreakIndex.add(index - 1); // store the index
+            }
+            fileReader.close();
+            inputFile.close();
         } catch (IOException e) {
             System.out.println("Error reading file: " + e.getMessage());
         }
@@ -189,11 +217,33 @@ public class SpellChecker {
 
     // (YS) Single Method: Use all the updated words to form a new .txt file
     private void createOutputFile(ArrayList<String> words, String fileName){
-        String content = String.join(" ", words);
         try (FileOutputStream outputFile = new FileOutputStream(fileName)){
-            for (String word : words) {
-                outputFile.write(word.getBytes());
-                outputFile.write(' ');
+            // write empty line at beginning (if exists)
+            for (int index : lineBreakIndex) {
+                if (index == -1){
+                    outputFile.write("\n".getBytes()); // write \n
+                }
+            }
+            // write into file word by word
+            for (int i = 0; i < words.size(); i++) {
+                outputFile.write(words.get(i).getBytes());
+                // check if there is any line break after this word
+                int breakCount = 0;
+                for (int index : lineBreakIndex) {
+                    if (index == i){
+                        breakCount++;
+                    }
+                }
+                // the last word don't need to add \n or ' '
+                if (i != words.size()-1) {
+                    if (breakCount > 0) {
+                        for (int j = 0; j < breakCount; j++) {
+                            outputFile.write("\n".getBytes()); // write \n
+                        }
+                    } else {
+                        outputFile.write(' '); // no break then print ' ' as usual
+                    }
+                }
             }
         } catch (IOException e){
             System.out.println(e.getMessage());
