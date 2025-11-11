@@ -19,33 +19,33 @@ public class WordRecommender {
     }
   
     public double getSimilarity(String word1, String word2) {
-      // TODO: change this!
-        double left_similarity=0.0;
-        double right_similarity=0.0;
-        int word1_length=word1.length();
-        int word2_length=word2.length();
-        int min_length=Math.min(word1.length(),word2.length());
-        int max_length=Math.max(word1.length(),word2.length());
-        int length_diff=max_length-min_length;
-        for (int i=0;i<min_length;i++){
-            if(word1.charAt(i)==word2.charAt(i)){
+        // TODO: change this!
+        double left_similarity = 0.0;
+        double right_similarity = 0.0;
+        int word1_length = word1.length();
+        int word2_length = word2.length();
+        int min_length = Math.min(word1.length(), word2.length());
+        int max_length = Math.max(word1.length(), word2.length());
+        int length_diff = max_length - min_length;
+        for (int i = 0; i < min_length; i++) {
+            if (word1.charAt(i) == word2.charAt(i)) {
                 left_similarity++;
             }
         }
-        for (int i=max_length-1;i>=min_length;i--){
-            if(word1.length()>word2_length){
-                if(word1.charAt(i)==word2.charAt(i-length_diff)){
+        for (int i = max_length - 1; i >= min_length; i--) {
+            if (word1.length() > word2_length) {
+                if (word1.charAt(i) == word2.charAt(i - length_diff)) {
                     right_similarity++;
 
                 }
-            }
-            else{
-                if(word2.charAt(i)==word1.charAt(i-length_diff)){
+            } else {
+                if (word2.charAt(i) == word1.charAt(i - length_diff)) {
                     right_similarity++;
+                }
             }
+            double similarity = (left_similarity + right_similarity) / 2;
+            return similarity;
         }
-            double similarity=(left_similarity+right_similarity)/2;
-        return similarity;
     }
   
     public ArrayList<String> getWordSuggestions(String word, int tolerance, double commonPercent, int topN) {
@@ -55,30 +55,33 @@ public class WordRecommender {
             if(Math.abs(word.length()-dic_elem.length())>tolerance){
                 continue;
             }
-            HashSet<Character> word_set1=new HashSet<>();
-            HashSet<Character> word_set2=new HashSet<>();
+            HashSet<Character> word_set=new HashSet<>();
             HashSet<Character> dic_elem_set=new HashSet<>();
             for(int i=0;i<word.length();i++){
-                word_set1.add(word.charAt(i));
-                word_set2.add(word.charAt(i));
+                word_set.add(word.charAt(i));
             }
             for(int i=0;i<dic_elem.length();i++){
                 dic_elem_set.add(dic_elem.charAt(i));
             }
-            word_set1.addAll(dic_elem_set);
-            int union_length=word_set1.size();
-            word_set2.retainAll(dic_elem_set);
-            int intersection_length=word_set2.size();
+            HashSet<Character> union_set=new HashSet<>();
+            HashSet<Character> intersect_set=new HashSet<>();
+            union_set.addAll(word_set);
+            union_set.addAll(dic_elem_set);
+            int union_length=union_set.size();
+            if(union_length==0) continue;
+            intersect_set.addAll(word_set);
+            intersect_set.retainAll(dic_elem_set);
+            int intersection_length=intersect_set.size();
             double common=(double)intersection_length/(double)union_length;
-            if (common>commonPercent){
+            if (common>=commonPercent){
                 candidate.add(dic_elem);
             }
         }
-
-        return candidate;
+        ArrayList<String> topN_suggestion=getTopN(candidate,word,topN);
+        return topN_suggestion;
     }
 
-        }
+
     // You can of course write other methods as well.
     private ArrayList<String> getTopN(ArrayList<String> candidate, String target, int N ){
 
