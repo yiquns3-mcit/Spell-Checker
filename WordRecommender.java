@@ -19,7 +19,32 @@ public class WordRecommender {
   
     public double getSimilarity(String word1, String word2) {
       // TODO: change this!
-      return 0.0;
+        double left_similarity=0.0;
+        double right_similarity=0.0;
+        int word1_length=word1.length();
+        int word2_length=word2.length();
+        int min_length=Math.min(word1.length(),word2.length());
+        int max_length=Math.max(word1.length(),word2.length());
+        int length_diff=max_length-min_length;
+        for (int i=0;i<min_length;i++){
+            if(word1.charAt(i)==word2.charAt(i)){
+                left_similarity++;
+            }
+        }
+        for (int i=max_length-1;i>=min_length;i--){
+            if(word1.length()>word2_length){
+                if(word1.charAt(i)==word2.charAt(i-length_diff)){
+                    right_similarity++;
+
+                }
+            }
+            else{
+                if(word2.charAt(i)==word1.charAt(i-length_diff)){
+                    right_similarity++;
+            }
+        }
+            double similarity=(left_similarity+right_similarity)/2;
+        return similarity;
     }
   
     public ArrayList<String> getWordSuggestions(String word, int tolerance, double commonPercent, int topN) {
