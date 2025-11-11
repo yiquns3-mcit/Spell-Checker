@@ -43,9 +43,9 @@ public class WordRecommender {
                     right_similarity++;
                 }
             }
-            double similarity = (left_similarity + right_similarity) / 2;
-            return similarity;
         }
+        double similarity = (left_similarity + right_similarity) / 2;
+        return similarity;
     }
   
     public ArrayList<String> getWordSuggestions(String word, int tolerance, double commonPercent, int topN) {
