@@ -1,3 +1,4 @@
+import java.lang.reflect.Array;
 import java.util.*;
 import java.io.FileReader;
 import java.io.IOException;
@@ -74,9 +75,35 @@ public class WordRecommender {
             }
         }
 
-
-        return null;
+        return candidate;
     }
-  
+
+        }
     // You can of course write other methods as well.
+    private ArrayList<String> getTopN(ArrayList<String> candidate, String target, int N ){
+
+        ArrayList<Double> similarity_vector=new ArrayList<>();
+        ArrayList<String> topN_suggestion=new ArrayList<>();
+        for(int i=0;i<candidate.size();i++){
+            String candidate_elem=candidate.get(i);
+            double similarity=getSimilarity(target,candidate_elem);
+            similarity_vector.add(similarity);
+
+        }
+        if(!similarity_vector.isEmpty()){
+            for(int j=0;j<N && !similarity_vector.isEmpty();j++) {
+                int highest_similarity_index=0;
+                for (int i = 0; i < similarity_vector.size(); i++) {
+                    if (similarity_vector.get(i) > similarity_vector.get(highest_similarity_index)) {
+                        highest_similarity_index = i;
+                    }
+                    topN_suggestion.add(candidate.get(highest_similarity_index));
+                    candidate.remove(highest_similarity_index);
+                    similarity_vector.remove(highest_similarity_index);
+                }
+            }
+
+        }
+        return topN_suggestion;
+    }
   }
