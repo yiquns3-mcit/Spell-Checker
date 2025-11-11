@@ -32,7 +32,7 @@ public class WordRecommender {
                 left_similarity++;
             }
         }
-        for (int i = max_length - 1; i >= min_length; i--) {
+        for (int i = max_length - 1; i >= length_diff; i--) {
             if (word1.length() > word2_length) {
                 if (word1.charAt(i) == word2.charAt(i - length_diff)) {
                     right_similarity++;
@@ -87,6 +87,7 @@ public class WordRecommender {
 
         ArrayList<Double> similarity_vector=new ArrayList<>();
         ArrayList<String> topN_suggestion=new ArrayList<>();
+
         for(int i=0;i<candidate.size();i++){
             String candidate_elem=candidate.get(i);
             double similarity=getSimilarity(target,candidate_elem);
@@ -96,14 +97,14 @@ public class WordRecommender {
         if(!similarity_vector.isEmpty()){
             for(int j=0;j<N && !similarity_vector.isEmpty();j++) {
                 int highest_similarity_index=0;
-                for (int i = 0; i < similarity_vector.size(); i++) {
+                for (int i = 1; i < similarity_vector.size(); i++) {
                     if (similarity_vector.get(i) > similarity_vector.get(highest_similarity_index)) {
                         highest_similarity_index = i;
                     }
-                    topN_suggestion.add(candidate.get(highest_similarity_index));
-                    candidate.remove(highest_similarity_index);
-                    similarity_vector.remove(highest_similarity_index);
                 }
+                topN_suggestion.add(candidate.get(highest_similarity_index));
+                candidate.remove(highest_similarity_index);
+                similarity_vector.remove(highest_similarity_index);
             }
 
         }
