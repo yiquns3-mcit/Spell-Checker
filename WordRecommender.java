@@ -25,23 +25,14 @@ public class WordRecommender {
         int word1_length = word1.length();
         int word2_length = word2.length();
         int min_length = Math.min(word1.length(), word2.length());
-        int max_length = Math.max(word1.length(), word2.length());
-        int length_diff = max_length - min_length;
         for (int i = 0; i < min_length; i++) {
             if (word1.charAt(i) == word2.charAt(i)) {
                 left_similarity++;
             }
         }
-        for (int i = max_length - 1; i >= length_diff; i--) {
-            if (word1.length() > word2_length) {
-                if (word1.charAt(i) == word2.charAt(i - length_diff)) {
-                    right_similarity++;
-
-                }
-            } else {
-                if (word2.charAt(i) == word1.charAt(i - length_diff)) {
-                    right_similarity++;
-                }
+        for (int i = 1; i <= min_length; i++) {
+            if (word1.charAt(word1_length-i)==word2.charAt(word2_length-i)){
+                right_similarity++;
             }
         }
         double similarity = (left_similarity + right_similarity) / 2;
