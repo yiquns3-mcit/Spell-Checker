@@ -126,7 +126,7 @@ public class SpellChecker {
     private void getSuggestion(String word) {
         // parameters setup for getWordSuggestions method
         int tolerance = 2;
-        double commonPercent = 0.8;
+        double commonPercent = 0.5;
         int topN = 4;
         wordSuggestion = recommender.getWordSuggestions(word, tolerance, commonPercent, topN);
     }
