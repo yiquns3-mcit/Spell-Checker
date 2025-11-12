@@ -1,3 +1,0 @@
-this is a smple text file to tst the spell checker
-we are wrting some words here to chekc how the program works
-the spel checker shold be able to find thse mistakes

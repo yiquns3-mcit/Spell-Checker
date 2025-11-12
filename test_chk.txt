@@ -1,3 +1,3 @@
-this is a smell text file to text the spell checker
+this is a simple text file to test the spell checker
 we are writing some words here to check how the program works
 the spell checker should be able to find these mistakes
