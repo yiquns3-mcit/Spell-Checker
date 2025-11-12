@@ -1,4 +1,3 @@
-import java.lang.reflect.Array;
 import java.util.*;
 import java.io.FileReader;
 import java.io.IOException;
@@ -20,85 +19,85 @@ public class WordRecommender {
   
     public double getSimilarity(String word1, String word2) {
         // TODO: change this!
-        double left_similarity = 0.0;
-        double right_similarity = 0.0;
-        int word1_length = word1.length();
-        int word2_length = word2.length();
-        int min_length = Math.min(word1.length(), word2.length());
-        for (int i = 0; i < min_length; i++) {
+        double leftSimilarity = 0.0;
+        double rightSimilarity = 0.0;
+        int word1Length = word1.length();
+        int word2Length = word2.length();
+        int minLength = Math.min(word1.length(), word2.length());
+        for (int i = 0; i < minLength; i++) {
             if (word1.charAt(i) == word2.charAt(i)) {
-                left_similarity++;
+                leftSimilarity++;
             }
         }
-        for (int i = 1; i <= min_length; i++) {
-            if (word1.charAt(word1_length-i)==word2.charAt(word2_length-i)){
-                right_similarity++;
+        for (int i = 1; i <= minLength; i++) {
+            if (word1.charAt(word1Length -i)==word2.charAt(word2Length -i)){
+                rightSimilarity++;
             }
         }
-        double similarity = (left_similarity + right_similarity) / 2;
+        double similarity = (leftSimilarity + rightSimilarity) / 2;
         return similarity;
     }
   
     public ArrayList<String> getWordSuggestions(String word, int tolerance, double commonPercent, int topN) {
       // TODO: change this!
         ArrayList<String> candidate = new ArrayList<String>();
-        for(String dic_elem:dictionary){
-            if(Math.abs(word.length()-dic_elem.length())>tolerance){
+        for(String dicElem :dictionary){
+            if(Math.abs(word.length()- dicElem.length())>tolerance){
                 continue;
             }
-            HashSet<Character> word_set=new HashSet<>();
-            HashSet<Character> dic_elem_set=new HashSet<>();
+            HashSet<Character> wordSet =new HashSet<>();
+            HashSet<Character> dicElemSet =new HashSet<>();
             for(int i=0;i<word.length();i++){
-                word_set.add(word.charAt(i));
+                wordSet.add(word.charAt(i));
             }
-            for(int i=0;i<dic_elem.length();i++){
-                dic_elem_set.add(dic_elem.charAt(i));
+            for(int i = 0; i< dicElem.length(); i++){
+                dicElemSet.add(dicElem.charAt(i));
             }
-            HashSet<Character> union_set=new HashSet<>();
-            HashSet<Character> intersect_set=new HashSet<>();
-            union_set.addAll(word_set);
-            union_set.addAll(dic_elem_set);
-            int union_length=union_set.size();
-            if(union_length==0) continue;
-            intersect_set.addAll(word_set);
-            intersect_set.retainAll(dic_elem_set);
-            int intersection_length=intersect_set.size();
-            double common=(double)intersection_length/(double)union_length;
+            HashSet<Character> unionSet =new HashSet<>();
+            HashSet<Character> intersectSet =new HashSet<>();
+            unionSet.addAll(wordSet);
+            unionSet.addAll(dicElemSet);
+            int unionLength = unionSet.size();
+            if(unionLength ==0) continue;
+            intersectSet.addAll(wordSet);
+            intersectSet.retainAll(dicElemSet);
+            int intersectionLength = intersectSet.size();
+            double common=(double) intersectionLength /(double) unionLength;
             if (common>=commonPercent){
-                candidate.add(dic_elem);
+                candidate.add(dicElem);
             }
         }
-        ArrayList<String> topN_suggestion=getTopN(candidate,word,topN);
-        return topN_suggestion;
+        ArrayList<String> topnSuggestion =getTopN(candidate,word,Math.min(topN,candidate.size()));
+        return topnSuggestion;
     }
 
 
     // You can of course write other methods as well.
     private ArrayList<String> getTopN(ArrayList<String> candidate, String target, int N ){
 
-        ArrayList<Double> similarity_vector=new ArrayList<>();
-        ArrayList<String> topN_suggestion=new ArrayList<>();
+        ArrayList<Double> similarityVector=new ArrayList<>();
+        ArrayList<String> topNSuggestion=new ArrayList<>();
 
         for(int i=0;i<candidate.size();i++){
-            String candidate_elem=candidate.get(i);
-            double similarity=getSimilarity(target,candidate_elem);
-            similarity_vector.add(similarity);
+            String candidateElem =candidate.get(i);
+            double similarity=getSimilarity(target, candidateElem);
+            similarityVector.add(similarity);
 
         }
-        if(!similarity_vector.isEmpty()){
-            for(int j=0;j<N && !similarity_vector.isEmpty();j++) {
+        if(!similarityVector.isEmpty()){
+            for(int j=0;j<N && !similarityVector.isEmpty();j++) {
                 int highest_similarity_index=0;
-                for (int i = 1; i < similarity_vector.size(); i++) {
-                    if (similarity_vector.get(i) > similarity_vector.get(highest_similarity_index)) {
+                for (int i = 1; i < similarityVector.size(); i++) {
+                    if (similarityVector.get(i) > similarityVector.get(highest_similarity_index)) {
                         highest_similarity_index = i;
                     }
                 }
-                topN_suggestion.add(candidate.get(highest_similarity_index));
+                topNSuggestion.add(candidate.get(highest_similarity_index));
                 candidate.remove(highest_similarity_index);
-                similarity_vector.remove(highest_similarity_index);
+                similarityVector.remove(highest_similarity_index);
             }
 
         }
-        return topN_suggestion;
+        return topNSuggestion;
     }
   }
