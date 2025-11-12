@@ -95,29 +95,11 @@ public class WordRecommenderTest {
 
 
     @Test
-    void testGetTopN() {
-        ArrayList<String> candidate = new ArrayList<>();
-        candidate.add("apple");
-        candidate.add("application");
-        candidate.add("applestore");
-        candidate.add("appstore");
-        candidate.add("applll");
-        candidate.add("appllle");
-        try {
-            java.lang.reflect.Method method = WordRecommender.class.getDeclaredMethod("getTopN",
-                    ArrayList.class, String.class, int.class);
-            method.setAccessible(true);
-
-            @SuppressWarnings("unchecked")
-            ArrayList<String> result = (ArrayList<String>) method.invoke(recommender,
-                    candidate, "app", 3);
-
-            assertNotNull(result);
-            assertEquals(3, result.size());
-
-        } catch (Exception e) {
-            fail("Failed to test private method: " + e.getMessage());
-        }
+    void testGetTopNThroughPublic() {
+        ArrayList<String> actual = recommender.getWordSuggestions("app", 2,0.9,3);
+        assertNotNull(actual);
+        int expected=3;
+        assertEquals(expected, actual.size());
     }
 }
 
